@@ -1,7 +1,10 @@
 spec_version: 1
 name: Moving_Target
 type: space
-runtime: fastapi
-app: server.app:app
+runtime: python
+# The HF Space runs app.py which:
+#   1. starts the FastAPI environment server (server/app.py) as a subprocess
+#   2. loads the base model with Unsloth + LoRA
+#   3. runs the GRPO training loop (collect rollouts → train)
+app: app:main
 port: 8000
-

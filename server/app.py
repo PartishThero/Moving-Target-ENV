@@ -21,7 +21,14 @@ def set_constraint(payload: ConstraintPayload):
 @app.get("/")
 def health_check():
     return {"status": "ok"}
-    
-if __name__ == "__main__":
+
+
+def main() -> None:
+    """OpenEnv server entry point used by validators and scripts."""
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    main()
