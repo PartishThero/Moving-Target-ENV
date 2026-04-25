@@ -2,5 +2,17 @@ openenv[core]>=0.2.0
 fastapi>=0.115.0
 uvicorn>=0.24.0
 
+# GRPO training dependencies (used by app.py on the HuggingFace Space)
+torch>=2.4.0
+transformers>=4.45.0
+trl>=1.0.0
+peft>=0.12.0
+datasets>=3.0.0
+accelerate>=1.0.0
+bitsandbytes>=0.44.0
+
+# Unsloth for fast LoRA training on T4 GPU — auto-detects CUDA version
+unsloth
+
 
 
