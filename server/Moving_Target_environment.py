@@ -22,6 +22,8 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
     ground_truth = {}
     _global_step_count = 0
     ground_truth_constraint = ""
+    _directory_rewarded = False
+
 
     def __init__(self):
         super().__init__()
@@ -80,6 +82,7 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
     def reset(self, seed=None, episode_id=None, **kwargs):
         """Standard OpenEnv reset method."""
         MovingTargetEnv._global_step_count = 0
+        MovingTargetEnv._directory_rewarded = False
         self._initialize_world()
         return MovingTargetObservation(
             data="Environment Reset. A new chaotic world of shifting API schemas has been generated.",
@@ -91,10 +94,14 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
         MovingTargetEnv._global_step_count += 1
 
         if action.tool == "get_merchants":
+            reward = 0
+            if not MovingTargetEnv._directory_rewarded: 
+                reward = 5.0
+                MovingTargetEnv._directory_rewarded = True
             return MovingTargetObservation(
                 data=json.dumps(list(MovingTargetEnv.ground_truth.keys())),
                 status=200,
-                reward=5.0
+                reward=reward
             )
 
         elif action.tool == "ask_watchdog":
