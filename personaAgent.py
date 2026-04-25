@@ -15,8 +15,8 @@ persona_llm = ChatOpenAI(
 
 def persona_node(state: AgentState):
     # 1. Randomized Constraint Pool
-    diets = ["Vegan & Keto", "Gluten-Free & Nut-Free", "Halal & Low-Carb", "No Restrictions"]
-    budgets = ["$30", "$50", "$100", "Unlimited"]
+    diets = ["Vegan", "Keto", "Gluten-Free" ,"Nut-Free", "Halal "," Low-Carb", "No Restrictions"]
+    budgets = ["$30", "$50", "$100", "No budget"]
     policies = ["Strictly Refundable", "Flexible", "Cheapest possible (ignore refunds)","Pet Friendly"]
     merchants = list(MovingTargetEnv().ground_truth.keys())
     

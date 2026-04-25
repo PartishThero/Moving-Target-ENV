@@ -80,10 +80,9 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
             MovingTargetEnv.ground_truth[m] = self._generate_random_schema()
 
     def reset(self, seed=None, episode_id=None, **kwargs):
-        """Standard OpenEnv reset method."""
+        """Standard OpenEnv reset method."""                 
         MovingTargetEnv._global_step_count = 0
         MovingTargetEnv._directory_rewarded = False
-        self._initialize_world()
         return MovingTargetObservation(
             data="Environment Reset. A new chaotic world of shifting API schemas has been generated.",
             status=200,
@@ -169,7 +168,7 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
         if MovingTargetEnv.ground_truth_constraint:
             try:
                 evaluator = ChatOpenAI(
-                    model=os.getenv("MODEL_NAME"),
+                    model="gpt-4o-mini",
                     temperature=0.0,
                     base_url="https://openrouter.ai/api/v1",
                     api_key=os.getenv("OPENROUTER_API_KEY"),
@@ -186,7 +185,7 @@ class MovingTargetEnv(Environment[MovingTargetAction, MovingTargetObservation, M
                 
                 The Agent's payload was: {payload}
 
-                Question: Does this order violate the user's constraints regarding Refund Policy, Budget, or Diet/Special needs (like Pet-Friendly)?
+                Question: Making sure if the all dietary requirements are forwarded either in policies or notes or both ,Does this order violate the user's constraints regarding Refund Policy, Budget, or Diet/Special needs (like Pet-Friendly)?
                 Respond with EXACTLY 'YES' if it violates (even partially), or 'NO' if it matches perfectly.
                 """
                 eval_result = evaluator.invoke(eval_prompt)

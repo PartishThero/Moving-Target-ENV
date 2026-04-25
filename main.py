@@ -75,8 +75,8 @@ if __name__ == "__main__":
     lifelong_memory = {}
     total_lifetime_score = 0
     prev_episode_summary = ""  # Will be built from the last episode's results
-    
     for episode in range(EPISODES):
+        context_insight=[]
         print(f"\n=======================================================")
         print(f"               STARTING EPISODE {episode + 1}/{EPISODES}")
         print(f"=======================================================\n")
@@ -93,10 +93,11 @@ if __name__ == "__main__":
         initial_state = {
             "messages": [],
             "current_merchant": "",
-            "last_known_schema": {},
+            "last_known_schema": lifelong_memory,
             "drift_detected": False,
             "reward_score": 0.0,
             "prev_episode_summary": prev_episode_summary,
+
             "step_count": 0
         }
 
@@ -117,8 +118,15 @@ if __name__ == "__main__":
                         
                         import re
                         match = re.search(r"\(Environment Reward: ([-\d.]+)\)", content_str)
+                        currScore=0
                         if match:
-                            episode_score += float(match.group(1))
+                            currScore=float(match.group(1))
+                            episode_score += currScore
+                            if(currScore<0):
+                                if(currScore<-49):
+                                    reason = content_str.split("\n(Environment")[0].replace("Observation: ", "").strip()
+                                    context_insight.append(f"Tool '{last_msg.name}' lost you {abs(currScore)} points because: {reason}")
+
                     else:
                         print(f"[{node_name.capitalize()} Message]: {last_msg.content}")
                 
@@ -131,12 +139,15 @@ if __name__ == "__main__":
                     lifelong_memory = state_update["last_known_schema"]
                 
         print(f"\n[SYSTEM] Episode {episode + 1} Complete. Episode Score: {episode_score}")
+        print(f"[SYSTEM]: context insight : {context_insight}")
         total_lifetime_score += episode_score
         
         # Build RL feedback summary for the NEXT episode's Concierge
+        rl_insights = "\n- ".join(context_insight) if context_insight else "No major mistakes."
         prev_episode_summary = (
-            f"In the last episode (Episode {episode + 1}), you scored {episode_score} points. "
-            f"{'Good job — maintain this strategy.' if episode_score >= 0 else 'You lost points. Try checking merchant policies more carefully before placing orders and avoid reduntant watchdog calls.'}"
+            f"In the last episode (Episode {episode + 1}), you scored {episode_score} points.\n"
+            f"Feedback on your mistakes:\n- {rl_insights}\n"
+            "Analyze this feedback, avoid repeating these mistakes, and improve your strategy."
         )
 
     print(f"\n=======================================================")
